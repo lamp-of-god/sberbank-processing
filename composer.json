@@ -1,0 +1,18 @@
+{
+    "name": "lamp-of-god/sberbank-processing",
+    "description": "Utility to work with Sberbank API",
+    "authors": [
+        {
+            "name": "SeRRg",
+            "email": "sergey_rus@bk.ru"
+        }
+    ],
+    "license": "WTFPL",
+    "require": {
+        "beberlei/assert": "^2.5",
+        "romanpitak/php-rest-client": "^1.2"
+    },
+    "require-dev": {
+        "kahlan/kahlan": "^3.1"
+    }
+}

@@ -1,6 +1,6 @@
 <?php
 
-namespace LampOfGod\SberbankClient;
+namespace LampOfGod\SberbankProcessing;
 
 use Assert\Assertion;
 use RestClient\Client;
@@ -11,22 +11,8 @@ use RestClient\Client;
  */
 class SberbankClient
 {
-    /**
-     * Error code means that everything is ok.
-     */
-    const ERRORCODE_OK = 0;
-
-    /**
-     * Possible order statuses.
-     */
-    const ORDER_STATUS_REGISTERED = 0;
-    const ORDER_STATUS_COMPLETED = 2;
-    const ORDER_STATUS_CANCELED = 3;
-    const ORDER_STATUS_REFUNDED = 4;
-    const ORDER_STATUS_FAILED = 6;
-
-
     const SBERBANK_API_URL = 'https://securepayments.sberbank.ru/payment/rest';
+    const SBERBANK_API_TEST_URL = 'https://3dsec.sberbank.ru/payment/rest/';
 
     /**
      * Sberbank API username.
@@ -53,14 +39,22 @@ class SberbankClient
     /**
      * SberbankClient constructor.
      *
-     * @param string $username   Sberbank API username.
-     * @param string $password   Sberbank API password.
+     * @param string $username  Sberbank API username.
+     * @param string $password  Sberbank API password.
+     * @param bool $test_mode   Shows whether test platform must be used or not.
      */
-    public function __construct($username, $password)
+    public function __construct($username, $password, $test_mode = false)
     {
+        Assertion::string($username);
+        Assertion::string($password);
+
         $this->username = $username;
         $this->password = $password;
-        $this->restClient = new Client(static::SBERBANK_API_URL);
+        $this->restClient = new Client(
+            $test_mode
+                ? static::SBERBANK_API_TEST_URL
+                : static::SBERBANK_API_URL
+        );
     }
 
     /**
@@ -84,7 +78,7 @@ class SberbankClient
             'amount'      => $amount,
             'returnUrl'   => $return_url,
         ]);
-        if ($response['errorCode'] !== static::ERRORCODE_OK) {
+        if ($response['errorCode'] !== IRegisterOrderErrorCode::ERROR_NONE) {
             throw new \Exception(
                 $response['errorMessage'], $response['errorCode']
             );
@@ -108,7 +102,7 @@ class SberbankClient
         $response = $this->makeAPIRequest('/getOrderStatus.do', [
             'orderId'   => $sber_order_id,
         ]);
-        if ($response['ErrorCode'] !== static::ERRORCODE_OK) {
+        if ($response['ErrorCode'] !== IGetOrderStatusErrorCode::ERROR_NONE) {
             throw new \LogicException(
                 $response['ErrorMessage'], $response['ErrorCode']
             );

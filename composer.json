@@ -14,5 +14,15 @@
     },
     "require-dev": {
         "kahlan/kahlan": "^3.1"
+    },
+    "autoload": {
+        "psr-4": {
+            "LampOfGod\\SberbankProcessing\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "LampOfGod\\SberbankProcessing\\Specs\\": "spec/"
+        }
     }
 }

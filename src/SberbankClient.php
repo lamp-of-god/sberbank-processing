@@ -93,7 +93,7 @@ class SberbankClient
                 $response['errorMessage'], $response['errorCode']
             );
         }
-        return $response['orderId'];
+        return [$response['orderId'], $response['formUrl']];
     }
 
     /**

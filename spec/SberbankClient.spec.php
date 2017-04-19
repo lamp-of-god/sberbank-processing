@@ -2,7 +2,6 @@
 
 namespace LampOfGod\SberbankProcessing\Spec;
 
-use Assert;
 use LampOfGod\SberbankProcessing\IGetOrderStatusErrorCode;
 use LampOfGod\SberbankProcessing\IOrderStatus;
 use LampOfGod\SberbankProcessing\IRegisterOrderErrorCode;
@@ -113,16 +112,19 @@ describe('SberbankClient', function() {
             }
         );
 
-        it('returns an order ID if request was successful', function() {
-            allow($this->client)
-                ->toReceive('makeAPIRequest')
-                ->andReturn([
-                    'orderId'   => 'testID',
-                    'errorCode' => IRegisterOrderErrorCode::ERROR_NONE,
-                ]);
-            $result = $this->client->registerOrder(1, 100, 'http://test');
-            expect($result)->toBe('testID');
-        });
+        it('returns an order ID and payment URL if request was successful',
+            function() {
+                allow($this->client)
+                    ->toReceive('makeAPIRequest')
+                    ->andReturn([
+                        'orderId'   => 'testID',
+                        'formUrl'   => 'http://url',
+                        'errorCode' => IRegisterOrderErrorCode::ERROR_NONE,
+                    ]);
+                $result = $this->client->registerOrder(1, 100, 'http://test');
+                expect($result)->toBe(['testID', 'http://url']);
+            }
+        );
 
     });
 

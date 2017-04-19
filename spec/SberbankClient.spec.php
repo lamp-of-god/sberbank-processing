@@ -216,7 +216,7 @@ describe('SberbankClient', function() {
         it('returns true if correct order ID was given',
             function() {
                 expect(SberbankClient::isSberbankOrderIDValid(
-                    '14613d21-7184-45eb-81f9-12dc21a10253'
+                    '14613d21-71b4-45eb-81f9-12dc21a12253'
                 ))->toBe(true);
             }
         );

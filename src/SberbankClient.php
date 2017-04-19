@@ -166,11 +166,10 @@ class SberbankClient
         return (preg_match('/^[a-zA-Z0-9\-]{1,32}$/', $order_id) === 1);
     }
 
-
     /**
      * Validates given Sberbank order ID is valid.
      *
-     * @param int|string $order_id   Order ID to be validated.
+     * @param string $order_id   Order ID to be validated.
      *
      * @return bool   Valid or not.
      */

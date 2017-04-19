@@ -89,8 +89,7 @@ class SberbankClient
             'amount'      => $amount,
             'returnUrl'   => $return_url,
         ]);
-        if ((int)$response['errorCode']
-                !== IRegisterOrderErrorCode::ERROR_NONE) {
+        if ((int)$response['errorCode'] !== IRegisterOrderError::NONE) {
             throw new \RuntimeException(
                 $response['errorMessage'], $response['errorCode']
             );
@@ -116,8 +115,7 @@ class SberbankClient
         $response = $this->makeAPIRequest('/getOrderStatus.do', [
             'orderId' => $sber_order_id,
         ]);
-        if ((int)$response['ErrorCode']
-                !== IGetOrderStatusErrorCode::ERROR_NONE) {
+        if ((int)$response['ErrorCode'] !== IGetOrderStatusError::NONE) {
             throw new \RuntimeException(
                 $response['ErrorMessage'], $response['ErrorCode']
             );
@@ -167,9 +165,9 @@ class SberbankClient
     }
 
     /**
-     * Validates given Sberbank order ID is valid.
+     * Validates given Sberbank order ID.
      *
-     * @param string $order_id   Order ID to be validated.
+     * @param string $order_id   Sberbank order ID to be validated.
      *
      * @return bool   Valid or not.
      */

@@ -2,9 +2,9 @@
 
 namespace LampOfGod\SberbankProcessing\Spec;
 
-use LampOfGod\SberbankProcessing\IGetOrderStatusErrorCode;
+use LampOfGod\SberbankProcessing\IGetOrderStatusError;
 use LampOfGod\SberbankProcessing\IOrderStatus;
-use LampOfGod\SberbankProcessing\IRegisterOrderErrorCode;
+use LampOfGod\SberbankProcessing\IRegisterOrderError;
 use LampOfGod\SberbankProcessing\SberbankClient;
 
 
@@ -91,11 +91,11 @@ describe('SberbankClient', function() {
         it('throws an correct Exception if request was unsuccessful',
             function() {
                 foreach ([
-                    IRegisterOrderErrorCode::ERROR_ALREADY_REGISTERED,
-                    IRegisterOrderErrorCode::ERROR_INCORRECT_CURRENCY,
-                    IRegisterOrderErrorCode::ERROR_MISSED_PARAMETER,
-                    IRegisterOrderErrorCode::ERROR_MISSED_VALUE,
-                    IRegisterOrderErrorCode::ERROR_SYSTEM,
+                    IRegisterOrderError::ALREADY_REGISTERED,
+                    IRegisterOrderError::INCORRECT_CURRENCY,
+                    IRegisterOrderError::MISSED_PARAMETER,
+                    IRegisterOrderError::MISSED_VALUE,
+                    IRegisterOrderError::SYSTEM,
                 ] as $errorCode) {
                     allow($this->client)->toReceive('makeAPIRequest')
                                         ->andReturn([
@@ -119,7 +119,7 @@ describe('SberbankClient', function() {
                     ->andReturn([
                         'orderId'   => 'testID',
                         'formUrl'   => 'http://url',
-                        'errorCode' => IRegisterOrderErrorCode::ERROR_NONE,
+                        'errorCode' => IRegisterOrderError::NONE,
                     ]);
                 $result = $this->client->registerOrder(1, 100, 'http://test');
                 expect($result)->toBe(['testID', 'http://url']);
@@ -153,10 +153,10 @@ describe('SberbankClient', function() {
         it('throws an correct Exception if request was unsuccessful',
             function() {
                 foreach ([
-                    IGetOrderStatusErrorCode::ERROR_ACCESS_DENIED,
-                    IGetOrderStatusErrorCode::ERROR_INCORRECT_PAYMENT,
-                    IGetOrderStatusErrorCode::ERROR_UNREGISTERED_ORDER,
-                    IGetOrderStatusErrorCode::ERROR_SYSTEM,
+                    IGetOrderStatusError::ACCESS_DENIED,
+                    IGetOrderStatusError::INCORRECT_PAYMENT,
+                    IGetOrderStatusError::UNREGISTERED_ORDER,
+                    IGetOrderStatusError::SYSTEM,
                 ] as $errorCode) {
                     allow($this->client)->toReceive('makeAPIRequest')
                                         ->andReturn([
@@ -177,11 +177,11 @@ describe('SberbankClient', function() {
             allow($this->client)
                 ->toReceive('makeAPIRequest')
                 ->andReturn([
-                    'OrderStatus' => IOrderStatus::ORDER_STATUS_COMPLETED,
-                    'ErrorCode'   => IGetOrderStatusErrorCode::ERROR_NONE,
+                    'OrderStatus' => IOrderStatus::COMPLETED,
+                    'ErrorCode'   => IGetOrderStatusError::NONE,
                 ]);
             $result = $this->client->getOrderStatus('test');
-            expect($result)->toBe(IOrderStatus::ORDER_STATUS_COMPLETED);
+            expect($result)->toBe(IOrderStatus::COMPLETED);
         });
 
     });

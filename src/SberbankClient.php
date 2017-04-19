@@ -89,7 +89,8 @@ class SberbankClient
             'amount'      => $amount,
             'returnUrl'   => $return_url,
         ]);
-        if ($response['errorCode'] !== IRegisterOrderErrorCode::ERROR_NONE) {
+        if ((int)$response['errorCode']
+                !== IRegisterOrderErrorCode::ERROR_NONE) {
             throw new \RuntimeException(
                 $response['errorMessage'], $response['errorCode']
             );
@@ -113,14 +114,15 @@ class SberbankClient
         }
 
         $response = $this->makeAPIRequest('/getOrderStatus.do', [
-            'orderId'   => $sber_order_id,
+            'orderId' => $sber_order_id,
         ]);
-        if ($response['ErrorCode'] !== IGetOrderStatusErrorCode::ERROR_NONE) {
+        if ((int)$response['ErrorCode']
+                !== IGetOrderStatusErrorCode::ERROR_NONE) {
             throw new \RuntimeException(
                 $response['ErrorMessage'], $response['ErrorCode']
             );
         }
-        return $response['OrderStatus'];
+        return (int)$response['OrderStatus'];
     }
 
     /**

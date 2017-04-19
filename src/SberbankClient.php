@@ -63,9 +63,10 @@ class SberbankClient
     /**
      * Registers order with given params.
      *
-     * @param int $order_id       Order ID to be registered.
-     * @param int $amount         Order amount in kopeks.
-     * @param string $return_url  Return URL to redirect user after payment.
+     * @param int|string $order_id  Order ID to be registered.
+     * @param int $amount           Order amount in kopeks.
+     * @param string $return_url    Return URL to redirect user
+     *                              after payment to.
      *
      * @throws \RuntimeException   When error during API request occured.
      *
@@ -73,7 +74,7 @@ class SberbankClient
      */
     public function registerOrder($order_id, $amount, $return_url)
     {
-        if (!is_int($order_id)) {
+        if (!$this->isOrderValid($order_id)) {
             throw new \InvalidArgumentException('Invalid order ID');
         }
         if (!is_int($amount)) {
@@ -145,5 +146,20 @@ class SberbankClient
         if ($response === false) {
             throw new \RuntimeException('Invalid API response');
         }
+    }
+
+    /**
+     * Validates given order ID to fit Sberbank API requirements.
+     *
+     * @param int|string $order_id   Order ID to be validated.
+     *
+     * @return bool   Valid or not.
+     */
+    public static function isOrderValid($order_id)
+    {
+        if (!is_int($order_id) && !is_string($order_id)) {
+            return false;
+        }
+        return (preg_match('/^[a-zA-Z0-9]{1,32}$/', $order_id) === 1);
     }
 }

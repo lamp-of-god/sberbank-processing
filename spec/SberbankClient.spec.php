@@ -53,7 +53,10 @@ describe('SberbankClient', function() {
 
         it('throws an InvalidArgumentException if invalid order ID is given',
             function() {
-                foreach ([null, [], new \stdClass(), 1.5] as $order_id) {
+                foreach ([
+                    null, [], new \stdClass(),
+                    'very_long_order_name_more_than_32_symbols'
+                ] as $order_id) {
                     $closure = function() use ($order_id) {
                         $this->client
                              ->registerOrder($order_id, 100, 'http://test');

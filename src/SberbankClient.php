@@ -108,7 +108,7 @@ class SberbankClient
      */
     public function getOrderStatus($sber_order_id)
     {
-        if (!is_string($sber_order_id)) {
+        if (!$this->isOrderValid($sber_order_id)) {
             throw new \InvalidArgumentException('Invalid order ID');
         }
 

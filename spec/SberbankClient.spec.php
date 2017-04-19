@@ -51,18 +51,15 @@ describe('SberbankClient', function() {
             allow($this->client)->toReceive('makeAPIRequest')->andReturn([]);
         });
 
-        it('throws an InvalidArgumentException if invalid order ID is given',
+        it('throws an InvalidArgumentException if order validation fails',
             function() {
-                foreach ([
-                    null, [], new \stdClass(),
-                    'very_long_order_name_more_than_32_symbols'
-                ] as $order_id) {
-                    $closure = function() use ($order_id) {
-                        $this->client
-                             ->registerOrder($order_id, 100, 'http://test');
-                    };
-                    expect($closure)->toThrow(new \InvalidArgumentException());
-                }
+                allow($this->client)
+                    ->toReceive('::isOrderValid')
+                    ->andReturn(false);
+                $closure = function() {
+                    $this->client->registerOrder('test', 100, 'http://test');
+                };
+                expect($closure)->toThrow(new \InvalidArgumentException());
             }
         );
 
@@ -141,14 +138,15 @@ describe('SberbankClient', function() {
             allow($this->client)->toReceive('makeAPIRequest')->andReturn([]);
         });
 
-        it('throws an InvalidArgumentException if invalid order ID is given',
+        it('throws an InvalidArgumentException if order validation fails',
             function() {
-                foreach ([null, [], new \stdClass(), 1.5] as $order_id) {
-                    $closure = function() use ($order_id) {
-                        $this->client->getOrderStatus($order_id);
-                    };
-                    expect($closure)->toThrow(new \InvalidArgumentException());
-                }
+                allow($this->client)
+                    ->toReceive('::isOrderValid')
+                    ->andReturn(false);
+                $closure = function() {
+                    $this->client->getOrderStatus('test');
+                };
+                expect($closure)->toThrow(new \InvalidArgumentException());
             }
         );
 
@@ -187,4 +185,30 @@ describe('SberbankClient', function() {
         });
 
     });
+
+    describe('::isOrderValid()', function() {
+
+        it('returns true if correct order ID was given',
+            function() {
+                foreach ([1, 'NO2534'] as $order_id) {
+                    expect(SberbankClient::isOrderValid($order_id))
+                        ->toBe(true);
+                }
+            }
+        );
+
+        it('returns false if incorrect order ID was given',
+            function() {
+                foreach ([
+                    null, [], new \stdClass(), 1.5,
+                    'very_long_order_name_more_than_32_symbols',
+                ] as $order_id) {
+                    expect(SberbankClient::isOrderValid($order_id))
+                        ->toBe(false);
+                }
+            }
+        );
+
+    });
+
 });

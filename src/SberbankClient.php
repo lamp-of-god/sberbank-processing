@@ -69,7 +69,7 @@ class SberbankClient
      *
      * @throws \RuntimeException   When error during API request occured.
      *
-     * @return string   Order ID in Sberbank system.
+     * @return string[]   Order ID in Sberbank system and URL to pay at.
      */
     public function registerOrder($order_id, $amount, $return_url)
     {

@@ -2,7 +2,6 @@
 
 namespace LampOfGod\SberbankProcessing;
 
-use Assert\Assertion;
 use RestClient\Client;
 
 
@@ -45,8 +44,12 @@ class SberbankClient
      */
     public function __construct($username, $password, $test_mode = false)
     {
-        Assertion::string($username);
-        Assertion::string($password);
+        if (!is_string($username)) {
+            throw new \InvalidArgumentException('Invalid username');
+        }
+        if (!is_string($password)) {
+            throw new \InvalidArgumentException('Invalid password');
+        }
 
         $this->username = $username;
         $this->password = $password;
@@ -64,14 +67,21 @@ class SberbankClient
      * @param int $amount         Order amount in kopeks.
      * @param string $return_url  Return URL to redirect user after payment.
      *
-     * @throws \Exception   When error during API request occured.
+     * @throws \RuntimeException   When error during API request occured.
      *
      * @return string   Order ID in Sberbank system.
      */
     public function registerOrder($order_id, $amount, $return_url)
     {
-        Assertion::integer($order_id);
-        Assertion::integer($amount);
+        if (!is_int($order_id)) {
+            throw new \InvalidArgumentException('Invalid order ID');
+        }
+        if (!is_int($amount)) {
+            throw new \InvalidArgumentException('Invalid amount');
+        }
+        if (!filter_var($return_url, FILTER_VALIDATE_URL)) {
+            throw new \InvalidArgumentException('Invalid return URL');
+        }
 
         $response = $this->makeAPIRequest('/register.do', [
             'orderNumber' => $order_id,
@@ -79,7 +89,7 @@ class SberbankClient
             'returnUrl'   => $return_url,
         ]);
         if ($response['errorCode'] !== IRegisterOrderErrorCode::ERROR_NONE) {
-            throw new \Exception(
+            throw new \RuntimeException(
                 $response['errorMessage'], $response['errorCode']
             );
         }
@@ -91,19 +101,21 @@ class SberbankClient
      *
      * @param string $sber_order_id   Order ID in Sberbank system.
      *
-     * @throws \Exception   When error during API request occured.
+     * @throws \RuntimeException   When error during API request occured.
      *
      * @return int   Order status.
      */
     public function getOrderStatus($sber_order_id)
     {
-        Assertion::string($sber_order_id);
+        if (!is_string($sber_order_id)) {
+            throw new \InvalidArgumentException('Invalid order ID');
+        }
 
         $response = $this->makeAPIRequest('/getOrderStatus.do', [
             'orderId'   => $sber_order_id,
         ]);
         if ($response['ErrorCode'] !== IGetOrderStatusErrorCode::ERROR_NONE) {
-            throw new \LogicException(
+            throw new \RuntimeException(
                 $response['ErrorMessage'], $response['ErrorCode']
             );
         }

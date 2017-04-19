@@ -9,7 +9,6 @@
     ],
     "license": "WTFPL",
     "require": {
-        "beberlei/assert": "^2.5",
         "romanpitak/php-rest-client": "^1.2"
     },
     "require-dev": {

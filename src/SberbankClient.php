@@ -74,7 +74,7 @@ class SberbankClient
      */
     public function registerOrder($order_id, $amount, $return_url)
     {
-        if (!$this->isOrderValid($order_id)) {
+        if (!$this->isOrderIDValid($order_id)) {
             throw new \InvalidArgumentException('Invalid order ID');
         }
         if (!is_int($amount)) {
@@ -109,7 +109,7 @@ class SberbankClient
      */
     public function getOrderStatus($sber_order_id)
     {
-        if (!$this->isOrderValid($sber_order_id)) {
+        if (!$this->isSberbankOrderIDValid($sber_order_id)) {
             throw new \InvalidArgumentException('Invalid order ID');
         }
 
@@ -148,6 +148,7 @@ class SberbankClient
         if ($response === false) {
             throw new \RuntimeException('Invalid API response');
         }
+        return $response;
     }
 
     /**
@@ -157,11 +158,27 @@ class SberbankClient
      *
      * @return bool   Valid or not.
      */
-    public static function isOrderValid($order_id)
+    public static function isOrderIDValid($order_id)
     {
         if (!is_int($order_id) && !is_string($order_id)) {
             return false;
         }
-        return (preg_match('/^[a-zA-Z0-9]{1,32}$/', $order_id) === 1);
+        return (preg_match('/^[a-zA-Z0-9\-]{1,32}$/', $order_id) === 1);
+    }
+
+
+    /**
+     * Validates given Sberbank order ID is valid.
+     *
+     * @param int|string $order_id   Order ID to be validated.
+     *
+     * @return bool   Valid or not.
+     */
+    public static function isSberbankOrderIDValid($order_id)
+    {
+        if (!is_string($order_id)) {
+            return false;
+        }
+        return (preg_match('/^[a-zA-Z0-9\-]{1,36}$/', $order_id) === 1);
     }
 }

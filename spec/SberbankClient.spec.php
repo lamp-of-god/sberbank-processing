@@ -54,7 +54,7 @@ describe('SberbankClient', function() {
         it('throws an InvalidArgumentException if order validation fails',
             function() {
                 allow($this->client)
-                    ->toReceive('::isOrderValid')
+                    ->toReceive('::isOrderIDValid')
                     ->andReturn(false);
                 $closure = function() {
                     $this->client->registerOrder('test', 100, 'http://test');
@@ -141,7 +141,7 @@ describe('SberbankClient', function() {
         it('throws an InvalidArgumentException if order validation fails',
             function() {
                 allow($this->client)
-                    ->toReceive('::isOrderValid')
+                    ->toReceive('::isSberbankOrderIDValid')
                     ->andReturn(false);
                 $closure = function() {
                     $this->client->getOrderStatus('test');
@@ -186,12 +186,12 @@ describe('SberbankClient', function() {
 
     });
 
-    describe('::isOrderValid()', function() {
+    describe('::isOrderIDValid()', function() {
 
         it('returns true if correct order ID was given',
             function() {
-                foreach ([1, 'NO2534'] as $order_id) {
-                    expect(SberbankClient::isOrderValid($order_id))
+                foreach ([1, 'NO-2534'] as $order_id) {
+                    expect(SberbankClient::isOrderIDValid($order_id))
                         ->toBe(true);
                 }
             }
@@ -203,7 +203,31 @@ describe('SberbankClient', function() {
                     null, [], new \stdClass(), 1.5,
                     'very_long_order_name_more_than_32_symbols',
                 ] as $order_id) {
-                    expect(SberbankClient::isOrderValid($order_id))
+                    expect(SberbankClient::isOrderIDValid($order_id))
+                        ->toBe(false);
+                }
+            }
+        );
+
+    });
+
+    describe('::isSberbankOrderIDValid()', function() {
+
+        it('returns true if correct order ID was given',
+            function() {
+                expect(SberbankClient::isSberbankOrderIDValid(
+                    '14613d21-7184-45eb-81f9-12dc21a10253'
+                ))->toBe(true);
+            }
+        );
+
+        it('returns false if incorrect order ID was given',
+            function() {
+                foreach ([
+                    null, [], new \stdClass(), 1.5,
+                    'very_long_order_name_more_than_36_symbols',
+                ] as $order_id) {
+                    expect(SberbankClient::isSberbankOrderIDValid($order_id))
                         ->toBe(false);
                 }
             }

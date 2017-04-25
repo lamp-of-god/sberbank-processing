@@ -13,6 +13,7 @@ class SberbankClient
     const SBERBANK_API_URL = 'https://securepayments.sberbank.ru/payment/rest';
     const SBERBANK_API_TEST_URL = 'https://3dsec.sberbank.ru/payment/rest/';
 
+
     /**
      * Sberbank API username.
      *

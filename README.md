@@ -39,6 +39,6 @@ You may add additional check for exception reason by using exception code.
         switch($status) {
         case IOrderStatus::COMPLETED:
         ...
-        case IOrderStatus::FAILED
+        case IOrderStatus::FAILED:
         ...
         }
